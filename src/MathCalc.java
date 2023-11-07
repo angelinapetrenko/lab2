@@ -1,13 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class MathCalc {
     private static final List<String> operations = List.of("(", ")", "*", "+", "-", "/", "^");
-    public double calc(String expression) throws Exception {
-        return 0;
-    }
+
     /**
      * Проверяем является ли строка знаком операции
      * @param str проверяемая строка
@@ -98,5 +97,79 @@ public class MathCalc {
             return false;
         }
     }
+    /**
+     * Подсчет выражение математического выражение
+     * @param expression математическое выражение
+     * @return результат выражения
+     * @throws Exception ошибки связанные с невалидным математическим выражением
+     */
+    public double calc(String expression) throws Exception {
+
+        expression = String.format("(%s)", expression);
+        List<String> elements = parseExpression(expression);
+
+        Stack<Double> numbers = new Stack<>();
+        Stack<String> functions = new Stack<>();
+
+        for (String element : elements) {
+
+            if (isNumber(element)) {
+                numbers.push(Double.parseDouble(element));
+            } else if (isOperation(element)) {
+                if (")".equals(element)) {
+                    while (!functions.isEmpty() && !"(".equals(functions.peek())) {
+                        if (numbers.size() < 2)
+                            throw new Exception();
+                        double b = numbers.pop();
+                        double a = numbers.pop();
+
+                        String operation = functions.pop();
+
+                        numbers.push(performOperation(a, b, operation));
+                    }
+
+                    if (functions.isEmpty())
+                        throw new Exception("Open bracket was expected");
+                    functions.pop();
+                } else {
+                    while (canPushOut(element, functions)) {
+                        if (numbers.size() < 2)
+                            throw new Exception();
+                        double b = numbers.pop();
+                        double a = numbers.pop();
+
+                        String operation = functions.pop();
+
+                        numbers.push(performOperation(a, b, operation));
+                    }
+
+                    functions.push(element);
+                }
+            } else
+                throw new Exception("Unexpected element '" + element + "'");
+        }
+
+        if (numbers.size() > 1 || functions.size() > 0)
+            throw new Exception("Bad input");
+
+        return numbers.peek();
+    }
+    /**
+     *
+     * @param operation операция для проверки
+     * @param operations стек с операциями
+     * @return true, если operation может вытолкнуть операцию в вершине стека, false иначе
+     * @throws Exception
+     */
+    public boolean canPushOut(String operation, Stack<String> operations) throws Exception {
+        if (operations.isEmpty())
+            return false;
+
+        int firstPriority = getPriority(operation);
+        int secondPriority = getPriority(operations.peek());
+
+        return secondPriority >= 0 && firstPriority >= secondPriority;
+    }
+
 
 }
