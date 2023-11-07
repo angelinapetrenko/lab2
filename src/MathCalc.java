@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MathCalc {
@@ -69,7 +66,7 @@ public class MathCalc {
         List<String> result = new ArrayList<>();
 
         for (String operation : operations) {
-            expression = expression.replace(operation, " " + operation + " "); //расставляем пробелы для разделения
+            expression = expression.replace(operation, " " + operation + " ");
         }
 
         expression = expression.replaceAll("\\s+", " ");
@@ -84,6 +81,7 @@ public class MathCalc {
 
         return result;
     }
+
     /**
      * Проверяем является ли строка числом
      * @param str проверяемая строка
@@ -96,6 +94,28 @@ public class MathCalc {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    /**
+     * Проверка с помощью регулярных выражений (переменные начинаются с буквы любого регистра, а затем идут
+     * любое количество букв или цифр любого регистра)
+     * @param element строка, которая может являться переменной
+     * @return результат проверки
+     */
+    private boolean isVariable(String element) {
+        return element.matches("[a-zA-Z]+[a-zA-Z0-9]*");
+    }
+
+    /**
+     * функция получения значений для переменных
+     * @param element название переменной
+     * @return значение переменной element,введённое пользователем
+     */
+   private static double getKey(String element) {
+     System.out.print("Введите значение для переменной " + element + ": ");
+        Scanner scanner = new Scanner(System.in);
+        double value = scanner.nextDouble();
+        return value;
     }
     /**
      * Подсчет выражение математического выражение
@@ -110,6 +130,8 @@ public class MathCalc {
 
         Stack<Double> numbers = new Stack<>();
         Stack<String> functions = new Stack<>();
+
+        Map<String, Double> variables = new HashMap<>();
 
         for (String element : elements) {
 
@@ -145,6 +167,13 @@ public class MathCalc {
 
                     functions.push(element);
                 }
+            } else if (isVariable(element)) {
+                if (!variables.containsKey(element)) {
+
+                    variables.put(element, getKey(element));
+                }
+
+                numbers.push(variables.get(element));
             } else
                 throw new Exception("Unexpected element '" + element + "'");
         }
@@ -153,7 +182,9 @@ public class MathCalc {
             throw new Exception("Bad input");
 
         return numbers.peek();
+
     }
+
     /**
      *
      * @param operation операция для проверки
