@@ -106,17 +106,7 @@ public class MathCalc {
         return element.matches("[a-zA-Z]+[a-zA-Z0-9]*");
     }
 
-    /**
-     * функция получения значений для переменных
-     * @param element название переменной
-     * @return значение переменной element,введённое пользователем
-     */
-   private static double getKey(String element) {
-     System.out.print("Введите значение для переменной " + element + ": ");
-        Scanner scanner = new Scanner(System.in);
-        double value = scanner.nextDouble();
-        return value;
-    }
+
     /**
      * Подсчет выражение математического выражение
      * @param expression математическое выражение
@@ -170,7 +160,7 @@ public class MathCalc {
             } else if (isVariable(element)) {
                 if (!variables.containsKey(element)) {
 
-                    variables.put(element, getKey(element));
+                    variables.put(element, Utils.getKey(element));
                 }
 
                 numbers.push(variables.get(element));
