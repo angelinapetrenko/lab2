@@ -1,7 +1,13 @@
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class MathCalc {
+
+    MathCalc( InputStream stream){
+        this.stream=stream;
+    }
+    InputStream stream;
     private static final List<String> operations = List.of("(", ")", "*", "+", "-", "/", "^");
 
     /**
@@ -160,7 +166,7 @@ public class MathCalc {
             } else if (isVariable(element)) {
                 if (!variables.containsKey(element)) {
 
-                    variables.put(element, Utils.getKey(element));
+                    variables.put(element, Utils.getKey(element,stream));
                 }
 
                 numbers.push(variables.get(element));

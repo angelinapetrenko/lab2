@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        MathCalc calc = new MathCalc();
+        MathCalc calc = new MathCalc(System.in);
         Scanner scanner = new Scanner(System.in);
 
         String input = scanner.nextLine();

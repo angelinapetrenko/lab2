@@ -1,11 +1,14 @@
 
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MathCalcTest {
 
-    private final MathCalc calculator = new MathCalc();
+    private final MathCalc calculator = new MathCalc(System.in);
 
     @Test
     public void additionTest() throws Exception{
@@ -48,4 +51,19 @@ public class MathCalcTest {
         assertEquals(14d, calculator.calc("2 * (6 + 3) * 7 / 9"));
         assertEquals(37d, calculator.calc("2 + 7 * ( 3 + 4/2)"));
     }
+
+    @Test
+    void testCalc_InvalidExpression() {
+        MathCalc mathCalc = new MathCalc(System.in);
+
+        // Тестирование невалидного выражения
+        assertThrows(Exception.class, () -> mathCalc.calc("2 + * 3"));
+
+        // Тестирование выражения с неизвестной операцией
+        assertThrows(Exception.class, () -> mathCalc.calc("2 $ 3"));
+
+        // Тестирование выражения с неподдерживаемой операцией
+        assertThrows(Exception.class, () -> mathCalc.calc("2 % 3"));
+    }
+
 }
